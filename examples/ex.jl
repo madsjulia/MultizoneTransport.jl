@@ -1,7 +1,8 @@
 import MultizoneTransport
 import PyPlot
+import Anasol
 
-dispersivity = 1.
+dispersivity = 10.
 uz1 = MultizoneTransport.UnsaturatedZone(25, dispersivity, 300.)
 sz1 = MultizoneTransport.SaturatedZone([0.;], [sqrt(300.);], [50.;], [dispersivity;], 100., Anasol.long_b_b_i_cf)
 uz2 = MultizoneTransport.UnsaturatedZone(25., dispersivity, 25.)
