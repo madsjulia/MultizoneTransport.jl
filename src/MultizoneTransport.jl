@@ -53,20 +53,29 @@ function getbrowniansource(zones, maxtime, numsamples)
 	return BrownianSources.BrownianSource(velocities, dispersivities, thresholds, maxtime, numsamples)
 end
 
-function getanasolargs(sz::SaturatedZone, ::Type{Val{1}})
-	H = .5
-	#TODO properly incorporate xb in here
-	xb = NaN
-	#TODO properly incorporate lambda in here
-	lambda = 0.
-	t0 = 0.
-	return (sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * sz.v[1] * sz.dispersivity[1]), H, xb, lambda)
+@generated function getanasolargs(sz::SaturatedZone, v)
+	if v == Type{Val{1}}
+		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, xb, lambda))
+	elseif v == Type{Val{2}}
+		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, xb, sz.x0[2], sz.sigma0[2], sz.v[2], sqrt(2 * speed * sz.dispersivity[2]), H, xb, lambda))
+	elseif v == Type{Val{3}}
+		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, xb, sz.x0[2], sz.sigma0[2], sz.v[2], sqrt(2 * speed * sz.dispersivity[2]), H, xb, sz.x0[3], sz.sigma0[3], sz.v[3], sqrt(2 * speed * sz.dispersivity[3]), H, xb, lambda))
+	else
+		error("Unacceptable type: $v")
+	end
+	q = quote
+		H = .5
+		#TODO properly incorporate xb in here when the there is a reflecting boundary in the anasol solution
+		xb = NaN
+		#TODO properly incorporate lambda in here -- requires transforming the source functions in the vadose zone
+		lambda = 0.
+		t0 = 0.
+		speed = norm(sz.v)
+		return $dimq
+	end
 end
 
-f(x, t, anasolargs...) = 1.
-
 function getconcentration(mz::Multizone, x::Vector, t::Real, szindex::Int)
-	#return releasemass * szs[i].anasolfunc(x, t, getanasolargs(szs[i], Val{length(x)}))
 	return mz.releasemass * mz.szs[szindex].anasolfunc(x, t, getanasolargs(mz.szs[szindex], Val{length(x)})..., 0., mz.maxtime, mz.sourcestrengths[szindex])
 end
 
