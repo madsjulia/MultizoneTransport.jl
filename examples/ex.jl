@@ -5,9 +5,9 @@ import Anasol
 function onedimex()
 	dispersivity = 10.
 	uz1 = MultizoneTransport.UnsaturatedZone(25, dispersivity, 300.)
-	sz1 = MultizoneTransport.SaturatedZone([0.;], [sqrt(300.);], [50.;], [dispersivity;], 100., Anasol.long_b_b_i_cf)
+	sz1 = MultizoneTransport.SaturatedZone([0.;], [sqrt(300.);], [50.;], [NaN;], [dispersivity;], 100., Anasol.long_b_b_i_cf)
 	uz2 = MultizoneTransport.UnsaturatedZone(25., dispersivity, 25.)
-	sz2 = MultizoneTransport.SaturatedZone([0.;], [sqrt(300.);], [50.;], [dispersivity;], 100., Anasol.long_b_b_i_cf)
+	sz2 = MultizoneTransport.SaturatedZone([0.;], [sqrt(300.);], [50.;], [NaN;], [dispersivity;], 100., Anasol.long_b_b_i_cf)
 	massrelease = 31.4159
 	mz = MultizoneTransport.Multizone([uz1, uz2], [sz1, sz2], massrelease, 50., 10000)
 	zones1 = [uz1;]
@@ -31,9 +31,9 @@ end
 function twodimex()
 	dispersivity = 10.
 	uz1 = MultizoneTransport.UnsaturatedZone(25, dispersivity, 300.)
-	sz1 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.)], [50., 0.], [dispersivity, 0.1 * dispersivity], 100., Anasol.long_bb_bb_ii_cf)
+	sz1 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.)], [50., 0.], [NaN, NaN], [dispersivity, 0.1 * dispersivity], 100., Anasol.long_bb_bb_ii_cf)
 	uz2 = MultizoneTransport.UnsaturatedZone(25., dispersivity, 25.)
-	sz2 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.)], [50., 0.], [dispersivity, 0.1 * dispersivity], 100., Anasol.long_bb_bb_ii_cf)
+	sz2 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.)], [50., 0.], [NaN, NaN], [dispersivity, 0.1 * dispersivity], 100., Anasol.long_bb_bb_ii_cf)
 	massrelease = 31.4159e2
 	mz = MultizoneTransport.Multizone([uz1, uz2], [sz1, sz2], massrelease, 50., 10000)
 	zones1 = [uz1;]
@@ -57,9 +57,9 @@ end
 function threedimex()
 	dispersivity = 10.
 	uz1 = MultizoneTransport.UnsaturatedZone(25, dispersivity, 300.)
-	sz1 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.), sqrt(.1)], [50., 0., 0.], [dispersivity, 0.1 * dispersivity, 0.01 * dispersivity], 100., Anasol.long_bbb_bbb_iii_cf)
+	sz1 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.), sqrt(.1)], [50., 0., 0.], [NaN, NaN, NaN], [dispersivity, 0.1 * dispersivity, 0.01 * dispersivity], 100., Anasol.long_bbb_bbb_iii_cf)
 	uz2 = MultizoneTransport.UnsaturatedZone(25., dispersivity, 25.)
-	sz2 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.), sqrt(.1)], [50., 0., 0.], [dispersivity, 0.1 * dispersivity, 0.01 * dispersivity], 100., Anasol.long_bbb_bbb_iii_cf)
+	sz2 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(300.), sqrt(.1)], [50., 0., 0.], [NaN, NaN, NaN], [dispersivity, 0.1 * dispersivity, 0.01 * dispersivity], 100., Anasol.long_bbb_bbb_iii_cf)
 	massrelease = 31.4159e3
 	mz = MultizoneTransport.Multizone([uz1, uz2], [sz1, sz2], massrelease, 50., 10000)
 	zones1 = [uz1;]

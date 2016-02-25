@@ -14,6 +14,7 @@ type SaturatedZone <: Zone
 	x0::Array{Float64, 1}
 	sigma0::Array{Float64, 1}
 	v::Array{Float64, 1}
+	xb::Array{Float64, 1}
 	dispersivity::Array{Float64, 1}
 	drippoint::Float64#the x coordinate defining the plane/line/point where this saturated zone starts dripping down into the unsaturated zone below
 	anasolfunc::Function
@@ -55,18 +56,16 @@ end
 
 @generated function getanasolargs(sz::SaturatedZone, v)
 	if v == Type{Val{1}}
-		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, xb, lambda))
+		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, sz.xb[1], lambda))
 	elseif v == Type{Val{2}}
-		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, xb, sz.x0[2], sz.sigma0[2], sz.v[2], sqrt(2 * speed * sz.dispersivity[2]), H, xb, lambda))
+		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, sz.xb[1], sz.x0[2], sz.sigma0[2], sz.v[2], sqrt(2 * speed * sz.dispersivity[2]), H, sz.xb[2], lambda))
 	elseif v == Type{Val{3}}
-		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, xb, sz.x0[2], sz.sigma0[2], sz.v[2], sqrt(2 * speed * sz.dispersivity[2]), H, xb, sz.x0[3], sz.sigma0[3], sz.v[3], sqrt(2 * speed * sz.dispersivity[3]), H, xb, lambda))
+		dimq = :((sz.x0[1], sz.sigma0[1], sz.v[1], sqrt(2 * speed * sz.dispersivity[1]), H, sz.xb[1], sz.x0[2], sz.sigma0[2], sz.v[2], sqrt(2 * speed * sz.dispersivity[2]), H, sz.xb[2], sz.x0[3], sz.sigma0[3], sz.v[3], sqrt(2 * speed * sz.dispersivity[3]), H, sz.xb[3], lambda))
 	else
 		error("Unacceptable type: $v")
 	end
 	q = quote
 		H = .5
-		#TODO properly incorporate xb in here when the there is a reflecting boundary in the anasol solution
-		xb = NaN
 		#TODO properly incorporate lambda in here -- requires transforming the source functions in the vadose zone
 		lambda = 0.
 		t0 = 0.
