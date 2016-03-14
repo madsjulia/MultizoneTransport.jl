@@ -1,5 +1,5 @@
-import MultizoneTransport
 import PyPlot
+import MultizoneTransport
 import Anasol
 
 function demo()
@@ -7,9 +7,9 @@ function demo()
 	drippoint = 100.
 	uz1 = MultizoneTransport.UnsaturatedZone(25, dispersivity, 300.)
 	#sz1 = MultizoneTransport.SaturatedZone([0.;], [sqrt(300.);], [10.;], [dispersivity;], drippoint, Anasol.long_b_d_i_cf)
-	sz1 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(30.), sqrt(.01)], [10., 0., 0.], [drippoint, NaN, NaN], [dispersivity, .1 * dispersivity, 0.01 * dispersivity], drippoint, Anasol.long_bbb_ddd_aii_cf)
+	sz1 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(30.), sqrt(.01)], [10., 0., 0.], [drippoint, NaN, NaN], [dispersivity, .1 * dispersivity, 0.01 * dispersivity], Anasol.long_bbb_ddd_aii_cf)
 	uz2 = MultizoneTransport.UnsaturatedZone(25., dispersivity, 100.)
-	sz2 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(30.), sqrt(.01)], [20, 0., 0.], [NaN, NaN, NaN], [dispersivity, .1 * dispersivity, 0.01 * dispersivity], drippoint, Anasol.long_bbb_ddd_iii_cf)
+	sz2 = MultizoneTransport.SaturatedZone([0., 0., 0.], [sqrt(300.), sqrt(30.), sqrt(.01)], [20, 0., 0.], [drippoint, NaN, NaN], [dispersivity, .1 * dispersivity, 0.01 * dispersivity], Anasol.long_bbb_ddd_iii_cf)
 	#sz2 = MultizoneTransport.SaturatedZone([0.;], [sqrt(300.);], [50.;], [dispersivity;], drippoint, Anasol.long_b_d_i_cf)
 	massrelease = 31.4159e3
 	mz = MultizoneTransport.Multizone([uz1, uz2], [sz1, sz2], massrelease, 50., 10000)

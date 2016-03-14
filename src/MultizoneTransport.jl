@@ -1,6 +1,7 @@
 module MultizoneTransport
 
 import BrownianSources
+import Anasol
 
 include("madscompat.jl")
 
@@ -18,7 +19,6 @@ type SaturatedZone <: Zone
 	v::Array{Float64, 1}
 	xb::Array{Float64, 1}
 	dispersivity::Array{Float64, 1}
-	drippoint::Float64#the x coordinate defining the plane/line/point where this saturated zone starts dripping down into the unsaturated zone below
 	anasolfunc::Function
 end
 
@@ -42,6 +42,14 @@ function Multizone(uzs, szs, releasemass, maxtime, numsamples)
 	return Multizone(uzs, szs, maxtime, releasemass, bss, sourcestrengths)
 end
 
+function getdrippoint(uz::UnsaturatedZone)
+	return uz.drippoint
+end
+
+function getdrippoint(sz::SaturatedZone)
+	return sz.xb[1]
+end
+
 function getbrowniansource(zones, maxtime, numsamples)
 	velocities = Array(Float64, length(zones))
 	dispersivities = Array(Float64, length(zones))
@@ -50,7 +58,7 @@ function getbrowniansource(zones, maxtime, numsamples)
 	for zone in zones
 		velocities[i] = zones[i].v[1]
 		dispersivities[i] = zones[i].dispersivity[1]
-		thresholds[i] = zones[i].drippoint
+		thresholds[i] = getdrippoint(zones[i])
 		i += 1
 	end
 	return BrownianSources.BrownianSource(velocities, dispersivities, thresholds, maxtime, numsamples)
