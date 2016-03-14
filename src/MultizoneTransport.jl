@@ -2,6 +2,8 @@ module MultizoneTransport
 
 import BrownianSources
 
+include("madscompat.jl")
+
 abstract Zone
 
 type UnsaturatedZone <: Zone
