@@ -1,4 +1,4 @@
-Julia command: "mads.jl"
+MADS model: "mzmads.jl"
 Pathways: 1
 Time samples: 2000
 p1_sz1_anasolfunc: Anasol.long_bbb_ddd_aii_cf
@@ -141,9 +141,3 @@ Wells:
  48: { t: 48, c: 1.50218, weight: 1, log: no, min: 0, max: 1e+06 },
  49: { t: 49, c: 1.30118, weight: 1, log: no, min: 0, max: 1e+06 },
  50: { t: 50, c: 1.12804, weight: 1, log: no, min: 0, max: 1e+06 } ] }
-
-Grid: { time: 50,
-xcount: 33, ycount: 19, zcount: 1,
-xmin: 700, ymin: 1000, zmin: 0,
-xmax: 2300, ymax: 1900, zmax: 50 }
-Time: { start: 1, end: 50, step: 1 }
