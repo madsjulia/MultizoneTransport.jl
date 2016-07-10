@@ -1,8 +1,7 @@
 import Mads
 import MultizoneTransport
-import Anasol
 
-md = Mads.loadyamlmadsfile("test.mads")
+md = Mads.loadmadsfile("test.mads")
 root = Mads.getmadsrootname(md)
 forward_results = Mads.forward(md)
 Mads.setobservationtargets!(md, forward_results) # set observation targets to match the forward run results

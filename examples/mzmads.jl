@@ -1,10 +1,6 @@
-import MultizoneTransport
-import Anasol
-
 function mzmads(madsdata)
 	function mzforward(parameters)
-		x = MultizoneTransport.madsforward(madsdata, parameters)
-		return x
+		return MultizoneTransport.madsforward(madsdata, parameters)
 	end
 	return mzforward
 end

@@ -1,4 +1,5 @@
 import Mads
+import DataStructures
 
 function getparamvec(params, prefix)
 	i = Array(Int, 0)
@@ -41,7 +42,7 @@ function madsforward(madsdata, parameters)
 	nummzs = madsdata["Pathways"]
 	numsamples = madsdata["Time samples"]
 	mzs = assemblemzs(parameters, nummzs, numsamples, madsdata)
-	results = Dict()
+	results = DataStructures.OrderedDict()
 	for wellkey in Mads.getwellkeys(madsdata)
 		if madsdata["Wells"][wellkey]["on"]
 			local wellx0::Array{Float64, 1}
