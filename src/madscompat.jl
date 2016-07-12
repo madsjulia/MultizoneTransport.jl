@@ -72,7 +72,7 @@ function madsforward(madsdata, parameters)
 						conc += .5 * getconcentration(mzs[i], wellx0, t, madsdata["Wells"][wellkey]["szindex"])
 						conc += .5 * getconcentration(mzs[i], wellx1, t, madsdata["Wells"][wellkey]["szindex"])
 					else
-						conc += .5 * getconcentration(mzs[i], .5 * (wellx1 + wellx0), t, madsdata["Wells"][wellkey]["szindex"])
+						conc += getconcentration(mzs[i], .5 * (wellx1 + wellx0), t, madsdata["Wells"][wellkey]["szindex"])
 					end
 				end
 				results[string(wellkey, "_", t)] = conc
