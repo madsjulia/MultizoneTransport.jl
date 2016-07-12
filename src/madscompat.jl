@@ -19,6 +19,8 @@ end
 
 function assemblemzs(params, nummzs, numsamples, madsdata)
 	mzs = Array(Multizone, nummzs)
+	t0s = Array(Float64, nummzs)
+	t1s = Array(Float64, nummzs)
 	for i = 1:nummzs
 		uzs = Array(UnsaturatedZone, 0)
 		szs = Array(SaturatedZone, 0)
@@ -32,16 +34,26 @@ function assemblemzs(params, nummzs, numsamples, madsdata)
 			push!(szs, SaturatedZone(x0, sigma0, v, [params["p$(i)_sz$(j)_drippoint"], NaN, NaN], dispersivity, eval(parse(madsdata["p$(i)_sz$(j)_anasolfunc"]))))
 			j += 1
 		end
-		mzs[i] = Multizone(uzs, szs, params["p$(i)_releasemass"], params["p$(i)_maxtime"], numsamples)
+		mzs[i] = Multizone(uzs, szs, params["p$(i)_massrate"], params["p$(i)_maxtime"], numsamples)
+		t0s[i] = params["p$(i)_t0"]
+		t1s[i] = params["p$(i)_t1"]
 	end
-	return mzs
+	return mzs, t0s, t1s
+end
+
+function sourcestrength(t, t0, t1)
+	if t > t0 && t < t1
+		return 1.
+	else
+		return 0.
+	end
 end
 
 function madsforward(madsdata, parameters)
 	obs = madsdata["Observations"]
 	nummzs = madsdata["Pathways"]
 	numsamples = madsdata["Time samples"]
-	mzs = assemblemzs(parameters, nummzs, numsamples, madsdata)
+	mzs, t0s, t1s = assemblemzs(parameters, nummzs, numsamples, madsdata)
 	results = DataStructures.OrderedDict()
 	for wellkey in Mads.getwellkeys(madsdata)
 		if madsdata["Wells"][wellkey]["on"]
@@ -69,10 +81,31 @@ function madsforward(madsdata, parameters)
 				conc = 0.
 				for i = 1:length(mzs)
 					if screen
-						conc += .5 * getconcentration(mzs[i], wellx0, t, madsdata["Wells"][wellkey]["szindex"])
-						conc += .5 * getconcentration(mzs[i], wellx1, t, madsdata["Wells"][wellkey]["szindex"])
+						szindex = madsdata["Wells"][wellkey]["szindex"]
+						if t - t0s[i] <= 0
+							conc += 0.
+						elseif t - t1s[i] <= 0 && Anasol.inclosedinterval(t - t0s[i], 0, t)
+							conc += Anasol.quadgkwithtol(tau->.5 * sourcestrength(t - tau, t0s[i], t1s[i]) * (getconcentration(mzs[i], wellx0, tau, szindex) + getconcentration(mzs[i], wellx1, tau, szindex)), 0, t - t0s[i])
+						elseif 0 <= t - t1s[i] && t - t0s[i] <= t
+							conc += Anasol.quadgkwithtol(tau->.5 * sourcestrength(t - tau, t0s[i], t1s[i]) * (getconcentration(mzs[i], wellx0, tau, szindex) + getconcentration(mzs[i], wellx1, tau, szindex)), t - t1s[i], t - t0s[i])
+						elseif Anasol.inclosedinterval(t - t1s[i], 0, t) && t - t0 >= t
+							error("t0 is less than zero, but the code assumes t0>= 0")
+						else
+							error("outside of eifelses: [t, t0, t1] = [$t, $t0, $t1]")
+						end
 					else
-						conc += getconcentration(mzs[i], .5 * (wellx1 + wellx0), t, madsdata["Wells"][wellkey]["szindex"])
+						szindex = madsdata["Wells"][wellkey]["szindex"]
+						if t - t0s[i] <= 0
+							conc += 0.
+						elseif t - t1s[i] <= 0 && Anasol.inclosedinterval(t - t0s[i], 0, t)
+							conc += Anasol.quadgkwithtol(tau->sourcestrength(t - tau, t0s[i], t1s[i]) * getconcentration(mzs[i], .5 * (wellx0 + wellx1), tau, szindex), 0, t - t0s[i])
+						elseif 0 <= t - t1s[i] && t - t0s[i] <= t
+							conc += Anasol.quadgkwithtol(tau->sourcestrength(t - tau, t0s[i], t1s[i]) * getconcentration(mzs[i], .5 * (wellx0 + wellx1), tau, szindex), t - t1s[i], t - t0s[i])
+						elseif Anasol.inclosedinterval(t - t1s[i], 0, t) && t - t0 >= t
+							error("t0 is less than zero, but the code assumes t0>= 0")
+						else
+							error("outside of eifelses: [t, t0, t1] = [$t, $t0, $t1]")
+						end
 					end
 				end
 				results[string(wellkey, "_", t)] = conc
