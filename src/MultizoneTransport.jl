@@ -36,7 +36,7 @@ function Multizone(uzs, szs, releasemass, maxtime, numsamples)
 	bss = Array(BrownianSources.BrownianSource, length(szs))
 	sourcestrengths = Array(Function, length(szs))
 	for i = 1:length(szs)
-		bss[i] = getbrowniansource([uzs; szs[1:i - 1]], maxtime, numsamples)
+		bss[i] = getbrowniansource([uzs[1:i]; szs[1:i - 1]], maxtime, numsamples)
 		sourcestrengths[i] = t->bss[i](t)
 	end
 	return Multizone(uzs, szs, maxtime, releasemass, bss, sourcestrengths)
